@@ -14,7 +14,12 @@ https://creativenerds.co.uk/freebies/80-free-wildlife-icons-the-best-ever-animal
 var targetX;
 var targetY;
 var targetImage;
-
+//win doggos
+var winImageX;
+var winImageY;
+//play again button
+var buttonX;
+var buttonY;
 // The ten decoy images
 var decoyImage1;
 var decoyImage2;
@@ -26,20 +31,19 @@ var decoyImage7;
 var decoyImage8;
 var decoyImage9;
 var decoyImage10;
-
+var scoreCount = 0;
 // The number of decoys to show on the screen, randomly
 // chosen from the decoy images
 var numDecoys = 100;
 
-// Keep track of whether they've won
-var gameOver = false;
 
 // preload()
 //
 // Loads the target and decoy images before the program starts
 function preload() {
   targetImage = loadImage("assets/images/animals-target.png");
-
+//win doggos
+  winImage = loadImage("assets/images/winImage.png");
   decoyImage1 = loadImage("assets/images/animals-01.png");
   decoyImage2 = loadImage("assets/images/animals-02.png");
   decoyImage3 = loadImage("assets/images/animals-03.png");
@@ -50,6 +54,8 @@ function preload() {
   decoyImage8 = loadImage("assets/images/animals-08.png");
   decoyImage9 = loadImage("assets/images/animals-09.png");
   decoyImage10 = loadImage("assets/images/animals-10.png");
+// resets game after win
+  playAgainButton = loadImage("assets/images/playAgainButton.png")
 }
 
 // setup()
@@ -60,12 +66,62 @@ function setup() {
   createCanvas(windowWidth,windowHeight);
   background("#ffff00");
   imageMode(CENTER);
+  banner();
+}
 
+function draw() {
+  if (scoreCount < 5) {
+    for (var i = 0; i < reset.length; i++){
+      reset();
+      }
+}
+  else{
+    background(0);
+    // Prepare our typography
+    textFont("Helvetica");
+    textSize(128);
+    textAlign(CENTER,CENTER);
+    noStroke();
+    fill(random(255));
+    // Tell them they won!
+    text("YOU WIN",width/2,height/2);
+    noFill();
+    stroke(random(255));
+    strokeWeight(20);
+    hotdog();
+  }
+}
+
+function banner(){
+  background("#ffff00");
+  //banner
+  noStroke();
+  fill(255);
+  rect(0,0,windowWidth,100);
+  //find this*
+  textSize(50);
+  fill(0);
+  text("FIND:",0,50);
+  //behind target image
+  fill(219, 199, 199);
+  ellipse(200,50,100,100);
+  fill(255);
+  triangle(200, 0, 159, 80, 241, 80);
+  //target image
+  image(targetImage,210,45);
+  //displays score
+  fill(0);
+  textSize(50);
+  text("SCORE: "+scoreCount,300,50);
+  logic();
+}
+
+function logic(){
   // Use a for loop to draw as many decoys as we need
   for (var i = 0; i < numDecoys; i++) {
     // Choose a random location for this decoy
     var x = random(0,width);
-    var y = random(0,height);
+    var y = random(155,height);
     // Generate a random number we can use for probability
     var r = random();
     // Use the random number to display one of the ten decoy
@@ -102,32 +158,30 @@ function setup() {
       image(decoyImage10,x,y);
     }
   }
+  hotdog();
+  }
 
+function hotdog(){
   // Once we've displayed all decoys, we choose a location for the target
   targetX = random(0,width);
-  targetY = random(0,height);
+  targetY = random(155,height);
   // And draw it (this means it will always be on top)
   image(targetImage,targetX,targetY);
 }
-
-function draw() {
-  if (gameOver) {
-    // Prepare our typography
-    textFont("Helvetica");
-    textSize(128);
-    textAlign(CENTER,CENTER);
-    noStroke();
-    fill(random(255));
-    // Tell them they won!
-    text("YOU WINNED!",width/2,height/2);
-
-    noFill();
-    stroke(random(255));
-    strokeWeight(10);
-    ellipse(targetX,targetY,targetImage.width,targetImage.height);
-  }
+function score(){
+  //displays score
+  fill(0);
+  textSize(50);
+  text("SCORE: "+score,300,50);
+}
+function scorecount(){
+    scoreCount = scoreCount + 1;
 }
 
+function reset (){
+  banner();
+  logic();
+}
 // mousePressed()
 //
 // Checks if the player clicked on the target and if so tells them they won
@@ -136,7 +190,8 @@ function mousePressed() {
   if (mouseX > targetX - targetImage.width/2 && mouseX < targetX + targetImage.width/2) {
     // Check if the mouse is also in the y range of the target
     if (mouseY > targetY - targetImage.height/2 && mouseY < targetY + targetImage.height/2) {
-      gameOver = true;
+      scorecount();
+      reset();
     }
   }
 }
